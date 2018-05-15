@@ -109,7 +109,7 @@
     "driver",
     "utils"
   ]
-  revision = "3e4586c0abfbc869329d01510c663c6c540efb77"
+  revision = "ed7424361d9b2420efdd90ef567ad096e77f0142"
 
 [[projects]]
   name = "github.com/modern-go/concurrent"
