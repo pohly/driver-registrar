@@ -28,6 +28,11 @@
   name = "github.com/kubernetes-csi/csi-test"
 
 [[constraint]]
+  branch = "jaeger-tracing"
+  name = "github.com/kubernetes-csi/drivers"
+  source = "github.com/pohly/drivers"
+
+[[constraint]]
   branch = "master"
   name = "github.com/golang/glog"
 
