@@ -25,6 +25,9 @@ import (
 
 	"github.com/container-storage-interface/spec/lib/go/csi/v0"
 	"github.com/golang/glog"
+	"github.com/grpc-ecosystem/go-grpc-middleware"
+	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
+	"github.com/opentracing/opentracing-go"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/connectivity"
@@ -68,10 +71,15 @@ func NewConnection(
 
 func connect(address string, timeout time.Duration) (*grpc.ClientConn, error) {
 	glog.V(2).Infof("Connecting to %s", address)
+	interceptor := grpc_middleware.ChainUnaryClient(
+		otgrpc.OpenTracingClientInterceptor(
+			opentracing.GlobalTracer(),
+			otgrpc.SpanDecorator(csicommon.TraceGRPCPayload)),
+		csicommon.LogGRPCClient)
 	dialOptions := []grpc.DialOption{
 		grpc.WithInsecure(),
 		grpc.WithBackoffMaxDelay(time.Second),
-		grpc.WithUnaryInterceptor(csicommon.LogGRPCClient),
+		grpc.WithUnaryInterceptor(interceptor),
 	}
 	if strings.HasPrefix(address, "/") {
 		dialOptions = append(dialOptions, grpc.WithDialer(func(addr string, timeout time.Duration) (net.Conn, error) {

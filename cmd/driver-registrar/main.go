@@ -33,6 +33,7 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/client-go/util/retry"
 
+	"github.com/kubernetes-csi/drivers/pkg/csi-common"
 	"github.com/kubernetes-csi/driver-registrar/pkg/connection"
 )
 
@@ -67,6 +68,9 @@ func main() {
 		return
 	}
 	glog.Infof("Version: %s", version)
+
+	closer := csicommon.InitTracer("csi-driver-registrar")
+	defer closer()
 
 	// Fetch node name from environemnt variable
 	k8sNodeName := os.Getenv("KUBE_NODE_NAME")
